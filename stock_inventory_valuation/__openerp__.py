@@ -1,7 +1,7 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Stock Inventory - Valuation Module for Odoo
+#    Stock Inventory Valuation Module for Odoo
 #    Copyright (C) 2013-Today GRAP (http://www.grap.coop)
 #    @author Sylvain LE GAL (https://twitter.com/legalsylvain)
 #
@@ -26,9 +26,11 @@
     'category': 'Stock',
     'description': """
 Stores the product standard price on the inventory.line, so as to be able to
-calculate the total valuation of one inventory.
+calculate the total valuation of an inventory.
 ============================================================================
 ===============================================
+
+Warning: this module doen't work if you change the unit of measure on an inventory line (it would give a wrong valuation).
 
 Copyright, Author and Licence :
 -------------------------------
@@ -36,16 +38,12 @@ Copyright, Author and Licence :
     * Author :
         * Julien WESTE;
         * Sylvain LE GAL (https://twitter.com/legalsylvain);
+        * Alexis de Lattre <alexis.delattre@akretion.com>
     * Licence : AGPL-3 (http://www.gnu.org/licenses/)
     """,
     'author': 'GRAP',
     'website': 'http://www.grap.coop',
     'license': 'AGPL-3',
-    'depends': [
-        'stock',
-    ],
-    'data': [
-        'data/stock_inventory_report.xml',
-        'view/view.xml',
-    ],
+    'depends': ['stock'],
+    'data': ['view/view.xml'],
 }
