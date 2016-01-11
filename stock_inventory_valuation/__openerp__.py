@@ -30,7 +30,7 @@ calculate the total valuation of an inventory.
 ============================================================================
 ===============================================
 
-Warning: this module doen't work if you change the unit of measure on an inventory line (it would give a wrong valuation).
+Warning: this module doesn't work if you change the unit of measure on an inventory line (it would give a wrong valuation).
 
 Copyright, Author and Licence :
 -------------------------------
