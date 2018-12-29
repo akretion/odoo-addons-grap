@@ -13,11 +13,15 @@ import odoo.addons.decimal_precision as dp
 class StockInventoryLine(models.Model):
     _inherit = 'stock.inventory.line'
 
-    @api.depends('standard_price', 'product_qty', 'product_uom_id')
+    @api.depends(
+        'standard_price', 'product_qty', 'product_uom_id', 'product_id')
     def compute_valuation(self):
         for line in self:
-            qty_product_uom = line.product_uom_id._compute_quantity(
-                line.product_qty, line.product_id.uom_id)
+            if line.product_uom_id and line.product_id:
+                qty_product_uom = line.product_uom_id._compute_quantity(
+                    line.product_qty, line.product_id.uom_id)
+            else:
+                qty_product_uom = line.product_qty
             line.valuation = line.standard_price * qty_product_uom
 
     standard_price = fields.Float(
