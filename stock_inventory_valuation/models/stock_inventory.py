@@ -15,7 +15,7 @@ class StockInventoryLine(models.Model):
 
     @api.depends(
         'standard_price', 'product_qty', 'product_uom_id', 'product_id')
-    def compute_valuation(self):
+    def _compute_valuation(self):
         for line in self:
             if line.product_uom_id and line.product_id:
                 qty_product_uom = line.product_uom_id._compute_quantity(
@@ -31,7 +31,7 @@ class StockInventoryLine(models.Model):
     company_currency_id = fields.Many2one(
         related='company_id.currency_id', readonly=True, store=True)
     valuation = fields.Monetary(
-        compute='compute_valuation', currency_field='company_currency_id',
+        compute='_compute_valuation', currency_field='company_currency_id',
         readonly=True, string='Valuation', store=True)
 
     @api.onchange('product_id')
@@ -53,15 +53,17 @@ class StockInventory(models.Model):
     _inherit = 'stock.inventory'
 
     @api.depends('line_ids.valuation')
-    def compute_valuation(self):
-        for inventory in self:
-            value = 0.0
-            for line in inventory.line_ids:
-                value += line.valuation
-            inventory.valuation = value
+    def _compute_valuation(self):
+        rg_res = self.env['stock.inventory.line'].read_group(
+            [('inventory_id', 'in', self.ids)],
+            ['inventory_id', 'valuation'],
+            ['inventory_id'])
+        mapped_data = dict([(x['inventory_id'][0], x['valuation']) for x in rg_res])
+        for inv in self:
+            inv.valuation = mapped_data.get(inv.id, 0)
 
     company_currency_id = fields.Many2one(
         related='company_id.currency_id', readonly=True, store=True)
     valuation = fields.Monetary(
-        compute='compute_valuation', currency_field='company_currency_id',
+        compute='_compute_valuation', currency_field='company_currency_id',
         readonly=True, string='Valuation')
